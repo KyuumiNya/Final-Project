@@ -8,7 +8,7 @@ Features:
 -Generated slime character
 -generated slime cubes to be collected
 -slime collected number on screen
--slime character can move wity "wasd"
+-slime character can move with "wasd"
 -when 10 cubes are collected the screen floods with slime and the game ends
 
 The challenge will be to execute all of these seperate features and have everything still working by the end
