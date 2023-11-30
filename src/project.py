@@ -3,7 +3,7 @@ import math
 import random
 import time
 
-class Player():
+class Player(): # Generated slime
     def __init__(self, pos=(0, 0), size=90):
         self.pos = list(pos)
         self.size = size
@@ -18,7 +18,7 @@ class Player():
     def draw(self, surface):
         surface.blit(self.surface, self.pos)
 
-    def move(self, keys):
+    def move(self, keys): # movement
         speed = 5
         if keys[pygame.K_w]:
             self.pos[1] -= speed
@@ -44,7 +44,7 @@ class SmallCircle():
     def draw(self, surface):
         surface.blit(self.surface, self.pos)
 
-class Game():
+class Game(): # Clearing the game 
     def __init__(self, resolution):
         self.resolution = resolution
         self.screen = pygame.display.set_mode(resolution)
@@ -57,10 +57,10 @@ class Game():
         self.win = False
         self.win_timer = 0
         self.win_display_time = 3
-        self.flash_duration = 1.0  # Adjusted flash duration
+        self.flash_duration = 1.0  
         self.last_flash_time = 0
 
-    def generate_small_circles(self, count):
+    def generate_small_circles(self, count): # generates slime balls to collect
         small_circles = []
         for _ in range(count):
             x = random.randrange(self.resolution[0])
@@ -70,7 +70,7 @@ class Game():
             small_circles.append(small_circle)
         return small_circles
 
-    def check_collisions(self):
+    def check_collisions(self): # method to collect the slime balls
         for small_circle in self.small_circles:
             distance = math.dist((self.player.pos[0] + self.player.size // 2, self.player.pos[1] + self.player.size // 2),
                                 (small_circle.pos[0] + small_circle.size // 2, small_circle.pos[1] + small_circle.size // 2))
@@ -83,12 +83,12 @@ class Game():
                     self.win = True
                     self.win_timer = time.time()
 
-    def draw_points(self):
+    def draw_points(self): # points
         font = pygame.font.Font(None, 36)
         text = font.render(f"Points: {self.points}", True, pygame.Color(255, 255, 255))
         self.screen.blit(text, (self.resolution[0] - 150, 20))
 
-    def draw_win_message(self):
+    def draw_win_message(self): # win message 
         current_time = time.time()
         if current_time - self.last_flash_time > self.flash_duration:
             self.last_flash_time = current_time
@@ -102,7 +102,7 @@ class Game():
         text_rect = text.get_rect(center=(self.resolution[0] // 2, self.resolution[1] // 2))
         self.screen.blit(text, text_rect)
 
-    def run(self):
+    def run(self): # End game methods
         running = True
         while running:
             for event in pygame.event.get():
