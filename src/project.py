@@ -3,7 +3,7 @@ import math
 import random
 import time
 
-class Player(): # Generated slime
+class Player():
     def __init__(self, pos=(0, 0), size=90):
         self.pos = list(pos)
         self.size = size
@@ -18,7 +18,7 @@ class Player(): # Generated slime
     def draw(self, surface):
         surface.blit(self.surface, self.pos)
 
-    def move(self, keys): # movement
+    def move(self, keys):
         speed = 5
         if keys[pygame.K_w]:
             self.pos[1] -= speed
@@ -44,7 +44,7 @@ class SmallCircle():
     def draw(self, surface):
         surface.blit(self.surface, self.pos)
 
-class Game(): # Clearing the game 
+class Game():
     def __init__(self, resolution):
         self.resolution = resolution
         self.screen = pygame.display.set_mode(resolution)
@@ -60,7 +60,7 @@ class Game(): # Clearing the game
         self.flash_duration = 1.0  
         self.last_flash_time = 0
 
-    def generate_small_circles(self, count): # generates slime balls to collect
+    def generate_small_circles(self, count):
         small_circles = []
         for _ in range(count):
             x = random.randrange(self.resolution[0])
@@ -70,7 +70,7 @@ class Game(): # Clearing the game
             small_circles.append(small_circle)
         return small_circles
 
-    def check_collisions(self): # method to collect the slime balls
+    def check_collisions(self):
         for small_circle in self.small_circles:
             distance = math.dist((self.player.pos[0] + self.player.size // 2, self.player.pos[1] + self.player.size // 2),
                                 (small_circle.pos[0] + small_circle.size // 2, small_circle.pos[1] + small_circle.size // 2))
@@ -83,12 +83,12 @@ class Game(): # Clearing the game
                     self.win = True
                     self.win_timer = time.time()
 
-    def draw_points(self): # points
+    def draw_points(self):
         font = pygame.font.Font(None, 36)
         text = font.render(f"Points: {self.points}", True, pygame.Color(255, 255, 255))
         self.screen.blit(text, (self.resolution[0] - 150, 20))
 
-    def draw_win_message(self): # win message 
+    def draw_win_message(self):
         current_time = time.time()
         if current_time - self.last_flash_time > self.flash_duration:
             self.last_flash_time = current_time
@@ -102,7 +102,34 @@ class Game(): # Clearing the game
         text_rect = text.get_rect(center=(self.resolution[0] // 2, self.resolution[1] // 2))
         self.screen.blit(text, text_rect)
 
-    def run(self): # End game methods
+    def draw_slime_animation(self):
+        slime_particles = []
+        slime_duration = 6  # seconds (changed from 3 seconds)
+        start_time = time.time()
+
+        while time.time() - start_time < slime_duration:
+            self.screen.fill(pygame.Color(0, 0, 0))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            for particle in slime_particles:
+                particle[1] += 5  # Adjust the speed of the slime particles
+                pygame.draw.circle(self.screen, pygame.Color(0, 255, 0), (particle[0], int(particle[1])), 5)
+
+            pygame.display.flip()
+            self.clock.tick(60)
+
+            slime_particles.append([random.randint(0, self.resolution[0]), 0])
+
+        # Reset the game after the slime animation
+        self.win = False
+        self.points = 0
+        self.small_circles = self.generate_small_circles(10)
+
+    def run(self):
         running = True
         while running:
             for event in pygame.event.get():
@@ -129,9 +156,7 @@ class Game(): # Clearing the game
                 self.draw_points()
             else:
                 if self.draw_win_message() and time.time() - self.win_timer > self.win_display_time:
-                    self.win = False
-                    self.points = 0
-                    self.small_circles = self.generate_small_circles(10)
+                    self.draw_slime_animation()
 
             pygame.display.flip()
             self.dt = self.clock.tick(60)
